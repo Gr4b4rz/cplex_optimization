@@ -1,4 +1,3 @@
-import cplex
 from docplex.mp.model import Model
 
 
@@ -54,8 +53,6 @@ def main():
     m.add_constraint(Am1 + Am2 + Am3 == 1100)
     m.add_constraint(Bm1 + Bm2 + Bm3 == 1200)
 
-    time = 3  # months
-
     # production cost
     prod_costA = Am1 * R1 + Am2 * R2 + Am3 * R3
     prod_costB = Bm1 * R4 + Bm2 * R5 + Bm3 * R6
@@ -71,30 +68,61 @@ def main():
     store_B_mon3 = R6 * (1/10 * 100 + 15/100 * (Bm3 - 100))
     store_costB = store_B_mon1 + store_B_mon2 + store_B_mon3
 
-    # resources - leaving res for next months ?
-    Am1 <= Z1Am1 / 0.2 + Z2Am1 / 0.8
-    Am2 <= Z1Am2 / 0.2 + Z2Am2 / 0.8
-    Am3 <= Z1Am3 / 0.2 + Z2Am3 / 0.8
+    Z1m1 = m.continuous_var(name='Z1m1')
+    Z2m1 = m.continuous_var(name='Z2m1')
+    Z1m2 = m.continuous_var(name='Z1m2')
+    Z2m2 = m.continuous_var(name='Z2m2')
+    Z1m3 = m.continuous_var(name='Z1m3')
+    Z2m3 = m.continuous_var(name='Z2m3')
 
-    Bm1 <= Z1Bm1 / 0.7 + Z2Bm1 / 0.3
-    Bm2 <= Z1Bm2 / 0.7 + Z2Bm2 / 0.3
-    Bm3 <= Z1Bm3 / 0.7 + Z2Bm3 / 0.3
+    Z1Am1 = m.continuous_var(name='Z1Am1')
+    Z1Am2 = m.continuous_var(name='Z1Am2')
+    Z1Am3 = m.continuous_var(name='Z1Am3')
+    Z1Bm1 = m.continuous_var(name='Z1Bm1')
+    Z1Bm2 = m.continuous_var(name='Z1Bm2')
+    Z1Bm3 = m.continuous_var(name='Z1Bm3')
 
-    Z1Am1 + Z1Bm1 = Z1m1
-    Z2Am1 + Z2Bm1 = Z2m1
-    Z1Am2 + Z1Bm2 = Z1m2
-    Z2Am2 + Z2Bm2 = Z2m2
-    Z1Am3 + Z1Bm3 = Z1m3
-    Z2Am3 + Z2Bm3 = Z2m3
+    Z2Am1 = m.continuous_var(name='Z2Am1')
+    Z2Am2 = m.continuous_var(name='Z2Am2')
+    Z2Am3 = m.continuous_var(name='Z2Am3')
+    Z2Bm1 = m.continuous_var(name='Z2Bm1')
+    Z2Bm2 = m.continuous_var(name='Z2Bm2')
+    Z2Bm3 = m.continuous_var(name='Z2Bm3')
 
-    Z1m1 <= 600
-    Z1m2 <= 700
-    Z1m3 <= 550
-    Z2m1 <= 1400
-    Z2m2 <= 900
-    Z3m3 <= 1200
+    m.add_constraint(Am1 == (Z1Am1 / 0.2 + Z2Am1 / 0.8) / 2)
+    m.add_constraint(Am2 == (Z1Am2 / 0.2 + Z2Am2 / 0.8) / 2)
+    m.add_constraint(Am3 == (Z1Am3 / 0.2 + Z2Am3 / 0.8) / 2)
+    m.add_constraint(Bm1 == (Z1Bm1 / 0.7 + Z2Bm1 / 0.3) / 2)
+    m.add_constraint(Bm2 == (Z1Bm2 / 0.7 + Z2Bm2 / 0.3) / 2)
+    m.add_constraint(Bm3 == (Z1Bm3 / 0.7 + Z2Bm3 / 0.3) / 2)
 
-    m.maximize(prod_costA + prod_costB + store_costA + store_costB)
+    m.add_constraint(Z1Am1 + Z1Bm1 == Z1m1)
+    m.add_constraint(Z2Am1 + Z2Bm1 == Z2m1)
+    m.add_constraint(Z1Am2 + Z1Bm2 == Z1m2)
+    m.add_constraint(Z2Am2 + Z2Bm2 == Z2m2)
+    m.add_constraint(Z1Am3 + Z1Bm3 == Z1m3)
+    m.add_constraint(Z2Am3 + Z2Bm3 == Z2m3)
+
+    m.add_constraint(Z1Am1 / 0.2 == Z2Am1 / 0.8)
+    m.add_constraint(Z1Am2 / 0.2 == Z2Am2 / 0.8)
+    m.add_constraint(Z1Am3 / 0.2 == Z2Am3 / 0.8)
+    m.add_constraint(Z1Bm1 / 0.7 == Z2Bm1 / 0.3)
+    m.add_constraint(Z1Bm2 / 0.7 == Z2Bm2 / 0.3)
+    m.add_constraint(Z1Bm3 / 0.7 == Z2Bm3 / 0.3)
+
+    m.add_constraint(Z1m1 <= 600)
+    m.add_constraint(Z1m2 <= 700)
+    m.add_constraint(Z1m3 <= 550)
+    m.add_constraint(Z2m1 <= 1400)
+    m.add_constraint(Z2m2 <= 900)
+    m.add_constraint(Z2m3 <= 1200)
+
+    m.minimize(prod_costA + prod_costB + store_costA + store_costB)
+
+    m.print_information()
+    sol = m.solve()
+    print(sol)
+    m.print_solution()
 
 
 if __name__ == "__main__":
