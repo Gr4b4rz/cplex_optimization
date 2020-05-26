@@ -35,6 +35,11 @@ class TStudentDist:
                                                        * gamma(self.v / 2) * gamma(1 / 2)))
         return result
 
+    def generate_scenarios(self):
+        """
+        """
+        return t.rvs(self.v, size=1000)
+
 
 def main():
     mu_matrix = [55, 40, 50, 35, 45, 30]
@@ -58,6 +63,9 @@ def main():
 
     for exp in e_vector:
         print(exp)
+
+    print(type(t_student_dist.generate_scenarios()))
+    print(t_student_dist.generate_scenarios())
 
 
 if __name__ == '__main__':
