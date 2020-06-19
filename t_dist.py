@@ -38,7 +38,7 @@ class TStudentDist:
     def generate_scenarios(self):
         """
         """
-        return t.rvs(self.v, size=1000)
+        return t.rvs(self.v, 40, 5, size=100)
 
 
 def main():
@@ -49,7 +49,7 @@ def main():
         [0, -6, 4, 2, -2, -5],
         [2, -6, 2, 25, 0, -17],
         [-1, -2, -2, 0, 9, -5],
-        [-1, 12, -5, 17, -5, 36]
+        [-1, 12, -5, -17, -5, 36]
     ]
     alpha = 20
     beta = 60

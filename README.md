@@ -1,1 +1,1 @@
-# Optimization problem solved with cplex and scipy
+# Optimization problem solved with Cplex and Scipy
